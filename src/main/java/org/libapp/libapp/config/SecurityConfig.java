@@ -12,16 +12,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF (temporarily, for development)
+                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/").permitAll() // Allow home page without authentication
-                        .anyRequest().authenticated()    // Require authentication for all other pages
+                        .anyRequest().permitAll() // Allow all requests without authentication
                 )
-                .formLogin(form -> form
-                        .loginPage("/login") // Specify custom login page
-                        .permitAll()         // Allow everyone to access the login page
-                );
+                .formLogin(AbstractHttpConfigurer::disable) // Disable form-based login
+                .httpBasic(AbstractHttpConfigurer::disable); // Disable basic authentication
 
         return http.build();
     }
 }
+
+
