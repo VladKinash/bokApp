@@ -10,6 +10,7 @@ public class HomeController {
     @GetMapping("/")
     public String home(Model model) {
         model.addAttribute("message", "Welcome to the Library Management System!");
-        return "hello"; // Refers to "templates/hello.html"
+        return "hello";
     }
 }
+
