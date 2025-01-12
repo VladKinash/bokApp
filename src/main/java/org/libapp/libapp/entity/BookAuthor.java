@@ -1,4 +1,4 @@
-package org.libapp.libapp;
+package org.libapp.libapp.entity;
 
 import jakarta.persistence.*;
 
@@ -11,7 +11,7 @@ public class BookAuthor {
     @MapsId("bookId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "book_id", nullable = false)
-    private org.libapp.libapp.Book book;
+    private Book book;
 
     @MapsId("authorId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -26,11 +26,11 @@ public class BookAuthor {
         this.id = id;
     }
 
-    public org.libapp.libapp.Book getBook() {
+    public Book getBook() {
         return book;
     }
 
-    public void setBook(org.libapp.libapp.Book book) {
+    public void setBook(Book book) {
         this.book = book;
     }
 
