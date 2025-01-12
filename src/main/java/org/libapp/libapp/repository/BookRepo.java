@@ -1,4 +1,7 @@
 package org.libapp.libapp.repository;
 
-public interface BookRepo {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.libapp.libapp.entity.Book;
+
+public interface BookRepo extends JpaRepository<Book, Long> {
 }
