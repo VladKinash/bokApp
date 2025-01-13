@@ -22,12 +22,28 @@ public class BookService {
         return bookRepo.save(book);
     }
 
-    public Book getBookById(Long id) {
+    public Book getBookById(Integer id) {
         return bookRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Book not found with ID: " + id));
     }
 
-    public void deleteBook(Long id) {
+    public Book updateBook(Integer id, Book updatedBook) {
+        Book existingBook = bookRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found with ID: " + id));
+
+        existingBook.setTitle(updatedBook.getTitle());
+        existingBook.setIsbn(updatedBook.getIsbn());
+        existingBook.setPublicationDate(updatedBook.getPublicationDate());
+        existingBook.setPublisherId(updatedBook.getPublisherId());
+        existingBook.setDescription(updatedBook.getDescription());
+        existingBook.setCoverImageUrl(updatedBook.getCoverImageUrl());
+        existingBook.setAuthorId(updatedBook.getAuthorId());
+        existingBook.setGenre(updatedBook.getGenre());
+
+        return bookRepo.save(existingBook);
+    }
+
+    public void deleteBook(Integer id) {
         bookRepo.deleteById(id);
     }
 }

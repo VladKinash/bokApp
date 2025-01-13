@@ -21,17 +21,22 @@ public class BookController {
     }
 
     @PostMapping
-    public Book createBook(@RequestBody Book book) {
+    public Book createBook( @RequestBody Book book) {
         return bookService.addBook(book);
     }
 
     @GetMapping("/{id}")
-    public Book getBookById(@PathVariable Long id) {
+    public Book getBookById(@PathVariable Integer id) {
         return bookService.getBookById(id);
     }
 
+    @PutMapping("/{id}")
+    public Book updateBook(@PathVariable Integer id, @RequestBody Book updatedBook) {
+        return bookService.updateBook(id, updatedBook);
+    }
+
     @DeleteMapping("/{id}")
-    public void deleteBook(@PathVariable Long id) {
+    public void deleteBook(@PathVariable Integer id) {
         bookService.deleteBook(id);
     }
 }
