@@ -15,18 +15,19 @@ public class Book {
     private Integer id;
 
     @Lob
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Lob
-    @Column(name = "isbn")
+    @Column(name = "isbn", nullable = false)
     private String isbn;
 
     @Column(name = "publication_date")
     private LocalDate publicationDate;
 
-    @Column(name = "publisher_id")
-    private Integer publisherId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "publisher_id", nullable = false, referencedColumnName = "publisher_id", foreignKey = @ForeignKey(name = "fk_publisher_book"))
+    private Publisher publisher;
 
     @Lob
     @Column(name = "description")
@@ -75,12 +76,12 @@ public class Book {
         this.publicationDate = publicationDate;
     }
 
-    public Integer getPublisherId() {
-        return publisherId;
+    public Publisher getPublisher() {
+        return publisher;
     }
 
-    public void setPublisherId(Integer publisherId) {
-        this.publisherId = publisherId;
+    public void setPublisher(Publisher publisher) {
+        this.publisher = publisher;
     }
 
     public String getDescription() {
@@ -114,5 +115,4 @@ public class Book {
     public void setGenre(String genre) {
         this.genre = genre;
     }
-
 }
