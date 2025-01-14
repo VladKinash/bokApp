@@ -15,6 +15,9 @@ public class UserRoleId implements java.io.Serializable {
     @Column(name = "role_id", nullable = false)
     private Integer roleId;
 
+    public UserRoleId(Integer userId, Integer roleId) {
+    }
+
     public Integer getUserId() {
         return userId;
     }

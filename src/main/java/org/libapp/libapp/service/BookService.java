@@ -34,7 +34,7 @@ public class BookService {
         existingBook.setTitle(updatedBook.getTitle());
         existingBook.setIsbn(updatedBook.getIsbn());
         existingBook.setPublicationDate(updatedBook.getPublicationDate());
-        existingBook.setPublisherId(updatedBook.getPublisherId());
+        existingBook.setPublisher(updatedBook.getPublisherId());
         existingBook.setDescription(updatedBook.getDescription());
         existingBook.setCoverImageUrl(updatedBook.getCoverImageUrl());
         existingBook.setAuthorId(updatedBook.getAuthorId());
