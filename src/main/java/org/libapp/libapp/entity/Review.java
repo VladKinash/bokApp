@@ -1,4 +1,4 @@
-package org.libapp.libapp;
+package org.libapp.libapp.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -20,7 +20,7 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private org.libapp.libapp.User user;
+    private User user;
 
     @Column(name = "rating")
     private Integer rating;
@@ -48,11 +48,11 @@ public class Review {
         this.book = book;
     }
 
-    public org.libapp.libapp.User getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(org.libapp.libapp.User user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

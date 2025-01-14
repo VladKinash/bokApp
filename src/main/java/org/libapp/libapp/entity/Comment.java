@@ -1,4 +1,4 @@
-package org.libapp.libapp;
+package org.libapp.libapp.entity;
 
 import jakarta.persistence.*;
 
@@ -13,7 +13,7 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private org.libapp.libapp.User user;
+    private User user;
 
     @Lob
     @Column(name = "comment_text", nullable = false)
@@ -24,7 +24,7 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
-    private org.libapp.libapp.Review review;
+    private Review review;
 
     public Integer getId() {
         return id;
@@ -34,11 +34,11 @@ public class Comment {
         this.id = id;
     }
 
-    public org.libapp.libapp.User getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(org.libapp.libapp.User user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -58,11 +58,11 @@ public class Comment {
         this.commentDate = commentDate;
     }
 
-    public org.libapp.libapp.Review getReview() {
+    public Review getReview() {
         return review;
     }
 
-    public void setReview(org.libapp.libapp.Review review) {
+    public void setReview(Review review) {
         this.review = review;
     }
 

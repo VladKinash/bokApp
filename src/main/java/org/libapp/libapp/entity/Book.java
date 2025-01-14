@@ -1,4 +1,4 @@
-package org.libapp.libapp;
+package org.libapp.libapp.entity;
 
 import jakarta.persistence.*;
 
@@ -10,6 +10,7 @@ import java.time.LocalDate;
 })
 public class Book {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "book_id", nullable = false)
     private Integer id;
 

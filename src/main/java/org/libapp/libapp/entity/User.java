@@ -1,4 +1,4 @@
-package org.libapp.libapp;
+package org.libapp.libapp.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;

@@ -1,4 +1,4 @@
-package org.libapp.libapp;
+package org.libapp.libapp.entity;
 
 import jakarta.persistence.*;
 
@@ -11,7 +11,7 @@ public class UserRole {
     @MapsId("userId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private org.libapp.libapp.User user;
+    private User user;
 
     @MapsId("roleId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -26,11 +26,11 @@ public class UserRole {
         this.id = id;
     }
 
-    public org.libapp.libapp.User getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(org.libapp.libapp.User user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
