@@ -15,6 +15,9 @@ public class BookAuthorId implements java.io.Serializable {
     @Column(name = "author_id", nullable = false)
     private Integer authorId;
 
+    public BookAuthorId(Integer bookId, Integer authorId) {
+    }
+
     public Integer getBookId() {
         return bookId;
     }
