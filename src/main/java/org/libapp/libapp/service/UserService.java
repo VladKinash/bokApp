@@ -49,6 +49,11 @@ public class UserService {
         User user = getUserById(id);
         userRepo.delete(user);
     }
+
+    public User getUserByUsername(String username) {
+        return userRepo.findByUsername(username);
+    }
+
     public User registerNewUser(UserRegistrationDto registrationDto) {
         if (!registrationDto.getPassword().equals(registrationDto.getConfirmPassword())) {
             throw new RuntimeException("Passwords do not match");

@@ -39,6 +39,7 @@ public class BookService {
         existingBook.setCoverImageUrl(updatedBook.getCoverImageUrl());
         existingBook.setAuthorId(updatedBook.getAuthorId());
         existingBook.setGenre(updatedBook.getGenre());
+        existingBook.setCopiesAvailable(updatedBook.getCopiesAvailable());
 
         return bookRepo.save(existingBook);
     }
