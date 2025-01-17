@@ -47,4 +47,19 @@ public class BookService {
     public void deleteBook(Integer id) {
         bookRepo.deleteById(id);
     }
+
+    public void incrementCopiesAvailable(Integer bookId, int amount) {
+        Book book = getBookById(bookId);
+        book.setCopiesAvailable(book.getCopiesAvailable() + amount);
+        bookRepo.save(book);
+    }
+
+    public void decrementCopiesAvailable(Integer bookId, int amount) {
+        Book book = getBookById(bookId);
+        if (book.getCopiesAvailable() < amount) {
+            throw new RuntimeException("Not enough copies available");
+        }
+        book.setCopiesAvailable(book.getCopiesAvailable() - amount);
+        bookRepo.save(book);
+    }
 }

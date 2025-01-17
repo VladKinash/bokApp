@@ -24,6 +24,18 @@ public class BorrowedBookService {
         return borrowedBookRepo.findAll();
     }
 
+
+    public BorrowedBook updateBorrowedBook(Integer id, BorrowedBook updatedBorrowedBook) {
+        BorrowedBook existingBorrowedBook = getBorrowedBookById(id); // Fetch existing book
+
+        // Update fields (except for user and book, which are typically not updated)
+        existingBorrowedBook.setBorrowDate(updatedBorrowedBook.getBorrowDate());
+        existingBorrowedBook.setDueDate(updatedBorrowedBook.getDueDate());
+        existingBorrowedBook.setReturnDate(updatedBorrowedBook.getReturnDate());
+
+        return borrowedBookRepo.save(existingBorrowedBook);
+    }
+
     public BorrowedBook getBorrowedBookById(Integer id) {
         return borrowedBookRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Borrowed Book not found with ID: " + id));
@@ -48,5 +60,7 @@ public class BorrowedBookService {
         BorrowedBook borrowedBook = getBorrowedBookById(id);
         borrowedBookRepo.delete(borrowedBook);
     }
-    
+
+
+
 }

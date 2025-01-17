@@ -7,18 +7,16 @@ import org.libapp.libapp.service.BookService;
 import org.libapp.libapp.service.BorrowedBookService;
 import org.libapp.libapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
-@Controller
-@RequestMapping("/borrowed-books")
+@RestController
+@RequestMapping("/api/borrowed-books") // Added "/api" to indicate it's an API endpoint
 public class BorrowedBookController {
 
     private final BorrowedBookService borrowedBookService;
@@ -32,74 +30,49 @@ public class BorrowedBookController {
         this.bookService = bookService;
     }
 
-    // --- READ ---
 
     @GetMapping
-    public String listBorrowedBooks(Model model) {
+    public ResponseEntity<List<BorrowedBook>> getAllBorrowedBooks() {
         List<BorrowedBook> borrowedBooks = borrowedBookService.getAllBorrowedBooks();
-        model.addAttribute("borrowedBooks", borrowedBooks);
-        return "borrowed-books"; // "borrowed-books.html"
+        return new ResponseEntity<>(borrowedBooks, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public String getBorrowedBook(@PathVariable Integer id, Model model) {
+    public ResponseEntity<BorrowedBook> getBorrowedBookById(@PathVariable Integer id) {
         BorrowedBook borrowedBook = borrowedBookService.getBorrowedBookById(id);
-        model.addAttribute("borrowedBook", borrowedBook);
-        return "borrowed-book-details"; // "borrowed-book-details.html"
+        return new ResponseEntity<>(borrowedBook, HttpStatus.OK);
     }
 
-    // --- CREATE ---
-
-    @GetMapping("/borrow")
-    public String showBorrowBookForm(Model model) {
-        List<Book> availableBooks = bookService.getAllBooks(); // Or getAvailableBooks() if you have such a method
-        model.addAttribute("availableBooks", availableBooks);
-        return "borrow-book"; // "borrow-book.html"
-    }
 
     @PostMapping("/borrow")
-    public String borrowBook(@RequestParam("bookId") Integer bookId) {
+    public ResponseEntity<BorrowedBook> borrowBook(@RequestParam("bookId") Integer bookId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
 
         User user = userService.getUserByUsername(currentUsername);
         Book book = bookService.getBookById(bookId);
 
-        borrowedBookService.borrowBook(user, book);
-
-        return "redirect:/borrowed-books";
+        BorrowedBook borrowedBook = borrowedBookService.borrowBook(user, book);
+        return new ResponseEntity<>(borrowedBook, HttpStatus.CREATED);
     }
 
-    // --- UPDATE ---
 
-    @GetMapping("/return/{id}")
-    public String showReturnBookForm(@PathVariable Integer id, Model model) {
-        BorrowedBook borrowedBook = borrowedBookService.getBorrowedBookById(id);
-        model.addAttribute("borrowedBook", borrowedBook);
-        return "return-book"; // "return-book.html"
+    @PutMapping("/return/{id}")
+    public ResponseEntity<BorrowedBook> returnBook(@PathVariable Integer id) {
+        BorrowedBook returnedBook = borrowedBookService.returnBook(id);
+        return new ResponseEntity<>(returnedBook, HttpStatus.OK);
     }
 
-    @PostMapping("/return/{id}")
-    public String returnBook(@PathVariable Integer id) {
-        borrowedBookService.returnBook(id);
-        return "redirect:/borrowed-books";
+    @PutMapping("/{id}")
+    public ResponseEntity<BorrowedBook> updateBorrowedBook(@PathVariable Integer id, @RequestBody BorrowedBook updatedBorrowedBook) {
+        BorrowedBook savedBorrowedBook = borrowedBookService.updateBorrowedBook(id, updatedBorrowedBook);
+        return new ResponseEntity<>(savedBorrowedBook, HttpStatus.OK);
     }
 
-    @GetMapping("/edit/{id}")
-    public String showEditBorrowedBookForm(@PathVariable Integer id, Model model) {
-        BorrowedBook borrowedBook = borrowedBookService.getBorrowedBookById(id);
-        model.addAttribute("borrowedBook", borrowedBook);
-        return "edit-borrowed-book"; // "edit-borrowed-book.html"
-    }
 
-    @PostMapping("/edit/{id}")
-    public String updateBorrowedBook(@PathVariable Integer id, @ModelAttribute("borrowedBook") BorrowedBook updatedBorrowedBook) {
-        return "redirect:/borrowed-books";
-    }
-
-    @PostMapping("/delete/{id}")
-    public String deleteBorrowedBook(@PathVariable Integer id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBorrowedBook(@PathVariable Integer id) {
         borrowedBookService.deleteBorrowedBook(id);
-        return "redirect:/borrowed-books";
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT); //204 code is ok when deleting
     }
 }
