@@ -39,11 +39,27 @@ public class BookService {
         existingBook.setCoverImageUrl(updatedBook.getCoverImageUrl());
         existingBook.setAuthorId(updatedBook.getAuthorId());
         existingBook.setGenre(updatedBook.getGenre());
+        existingBook.setCopiesAvailable(updatedBook.getCopiesAvailable());
 
         return bookRepo.save(existingBook);
     }
 
     public void deleteBook(Integer id) {
         bookRepo.deleteById(id);
+    }
+
+    public void incrementCopiesAvailable(Integer bookId, int amount) {
+        Book book = getBookById(bookId);
+        book.setCopiesAvailable(book.getCopiesAvailable() + amount);
+        bookRepo.save(book);
+    }
+
+    public void decrementCopiesAvailable(Integer bookId, int amount) {
+        Book book = getBookById(bookId);
+        if (book.getCopiesAvailable() < amount) {
+            throw new RuntimeException("Not enough copies available");
+        }
+        book.setCopiesAvailable(book.getCopiesAvailable() - amount);
+        bookRepo.save(book);
     }
 }

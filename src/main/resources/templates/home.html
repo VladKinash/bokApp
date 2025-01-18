@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Catalog</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h2>Book Catalog</h2>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Copies Available</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
+            <td><a th:href="@{/books/{id}(id=${book.id})}" th:text="${book.title}"></a></td>
+            <td th:text="${book.copiesAvailable}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

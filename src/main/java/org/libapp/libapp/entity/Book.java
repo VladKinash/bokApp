@@ -14,6 +14,9 @@ public class Book {
     @Column(name = "book_id", nullable = false)
     private Integer id;
 
+    @Column(name = "copies_available")
+    private Integer copiesAvailable;
+
     @Lob
     @Column(name = "title", nullable = false)
     private String title;
@@ -118,5 +121,13 @@ public class Book {
 
     public Publisher getPublisherId() {
         return publisher;
+    }
+
+    public Integer getCopiesAvailable() {
+        return copiesAvailable;
+    }
+
+    public void setCopiesAvailable(Integer copiesAvailable) {
+        this.copiesAvailable = copiesAvailable;
     }
 }
