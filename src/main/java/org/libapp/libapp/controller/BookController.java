@@ -3,7 +3,7 @@ package org.libapp.libapp.controller;
 import org.libapp.libapp.entity.Book;
 import org.libapp.libapp.service.BookService;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.ui.Model;
 import java.util.List;
 
 @RestController
@@ -38,5 +38,12 @@ public class BookController {
     @DeleteMapping("/{id}")
     public void deleteBook(@PathVariable Integer id) {
         bookService.deleteBook(id);
+    }
+
+    @GetMapping("/{id}")
+    public String getBookDetails(@PathVariable Integer id, Model model) {
+        Book book = bookService.getBookById(id);
+        model.addAttribute("book", book);
+        return "book-details";
     }
 }
