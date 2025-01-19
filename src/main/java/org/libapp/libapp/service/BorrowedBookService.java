@@ -20,47 +20,53 @@ public class BorrowedBookService {
         this.borrowedBookRepo = borrowedBookRepo;
     }
 
+
     public List<BorrowedBook> getAllBorrowedBooks() {
         return borrowedBookRepo.findAll();
     }
 
 
-    public BorrowedBook updateBorrowedBook(Integer id, BorrowedBook updatedBorrowedBook) {
-        BorrowedBook existingBorrowedBook = getBorrowedBookById(id); // Fetch existing book
-
-        // Update fields (except for user and book, which are typically not updated)
-        existingBorrowedBook.setBorrowDate(updatedBorrowedBook.getBorrowDate());
-        existingBorrowedBook.setDueDate(updatedBorrowedBook.getDueDate());
-        existingBorrowedBook.setReturnDate(updatedBorrowedBook.getReturnDate());
-
-        return borrowedBookRepo.save(existingBorrowedBook);
-    }
-
     public BorrowedBook getBorrowedBookById(Integer id) {
         return borrowedBookRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Borrowed Book not found with ID: " + id));
     }
+
+
+    public List<BorrowedBook> getBorrowedBooksByUser(User user) {
+        return borrowedBookRepo.findByUser(user);
+    }
+
+
     public BorrowedBook borrowBook(User user, Book book) {
         BorrowedBook borrowedBook = new BorrowedBook();
         borrowedBook.setUser(user);
         borrowedBook.setBook(book);
         borrowedBook.setBorrowDate(LocalDate.now());
-        borrowedBook.setDueDate(LocalDate.now().plusDays(14)); // Example: Due date is 14 days from borrow date
-
+        borrowedBook.setDueDate(LocalDate.now().plusDays(14)); // e.g. 2 weeks
+        // You might also want to decrement the book’s available copies here.
         return borrowedBookRepo.save(borrowedBook);
     }
+
 
     public BorrowedBook returnBook(Integer borrowId) {
         BorrowedBook borrowedBook = getBorrowedBookById(borrowId);
         borrowedBook.setReturnDate(LocalDate.now());
-
+        // You might also want to increment the book’s available copies here.
         return borrowedBookRepo.save(borrowedBook);
     }
+
+
+    public BorrowedBook updateBorrowedBook(Integer id, BorrowedBook updatedBorrowedBook) {
+        BorrowedBook existingBorrowedBook = getBorrowedBookById(id);
+        existingBorrowedBook.setBorrowDate(updatedBorrowedBook.getBorrowDate());
+        existingBorrowedBook.setDueDate(updatedBorrowedBook.getDueDate());
+        existingBorrowedBook.setReturnDate(updatedBorrowedBook.getReturnDate());
+        return borrowedBookRepo.save(existingBorrowedBook);
+    }
+
+
     public void deleteBorrowedBook(Integer id) {
         BorrowedBook borrowedBook = getBorrowedBookById(id);
         borrowedBookRepo.delete(borrowedBook);
     }
-
-
-
 }

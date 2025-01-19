@@ -10,7 +10,7 @@
     <h2>Book Details</h2>
 
     <p>Title: <span th:text="${book.title}"></span></p>
-    <p>Author: <span th:text="${book.authorId}"></span></p>
+    <p>Author: <span th:text="${author.firstName != null ? author.firstName : ''} + ' ' + ${author.lastName != null ? author.lastName : ''}"></span></p>
     <p>ISBN: <span th:text="${book.isbn}"></span></p>
     <p>Genre: <span th:text="${book.genre}"></span></p>
     <p>Copies Available: <span th:text="${book.copiesAvailable}"></span></p>

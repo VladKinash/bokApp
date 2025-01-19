@@ -9,9 +9,12 @@
 <div class="container">
     <div class="header">
         <h2>Book Catalog</h2>
-        <form th:action="@{/logout}" method="post">
-            <button type="submit" class="logout-button">Logout</button>
-        </form>
+        <div class="header-buttons">
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+            <a th:href="@{/users/profile}" class="profile-button">My Profile</a>
+        </div>
     </div>
 
     <table>
