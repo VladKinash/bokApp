@@ -6,6 +6,7 @@ import org.libapp.libapp.entity.User;
 import org.libapp.libapp.repository.BorrowedBookRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,10 +15,12 @@ import java.util.List;
 public class BorrowedBookService {
 
     private final BorrowedBookRepo borrowedBookRepo;
+    private final BookService bookService; // Inject BookService to manage book copies
 
     @Autowired
-    public BorrowedBookService(BorrowedBookRepo borrowedBookRepo) {
+    public BorrowedBookService(BorrowedBookRepo borrowedBookRepo, BookService bookService) {
         this.borrowedBookRepo = borrowedBookRepo;
+        this.bookService = bookService;
     }
 
 
@@ -37,13 +40,21 @@ public class BorrowedBookService {
     }
 
 
+    @Transactional
     public BorrowedBook borrowBook(User user, Book book) {
+        if (book.getCopiesAvailable() <= 0) {
+            throw new RuntimeException("No copies available for this book.");
+        }
+
         BorrowedBook borrowedBook = new BorrowedBook();
         borrowedBook.setUser(user);
         borrowedBook.setBook(book);
         borrowedBook.setBorrowDate(LocalDate.now());
-        borrowedBook.setDueDate(LocalDate.now().plusDays(14)); // e.g. 2 weeks
-        // You might also want to decrement the book’s available copies here.
+        borrowedBook.setDueDate(LocalDate.now().plusDays(14)); // Example: 2 weeks
+
+        book.setCopiesAvailable(book.getCopiesAvailable() - 1);
+        bookService.updateBook(book.getId(), book); // Ensure BookService has an update method
+
         return borrowedBookRepo.save(borrowedBook);
     }
 
@@ -51,7 +62,6 @@ public class BorrowedBookService {
     public BorrowedBook returnBook(Integer borrowId) {
         BorrowedBook borrowedBook = getBorrowedBookById(borrowId);
         borrowedBook.setReturnDate(LocalDate.now());
-        // You might also want to increment the book’s available copies here.
         return borrowedBookRepo.save(borrowedBook);
     }
 
