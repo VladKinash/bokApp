@@ -17,6 +17,8 @@
       <th>Borrow Date</th>
       <th>Due Date</th>
       <th>Return Date</th>
+      <th>Status</th>
+      <th>Action</th>
     </tr>
     </thead>
     <tbody>
@@ -26,6 +28,17 @@
       <td th:text="${borrowedBook.dueDate}"></td>
       <td>
         <span th:text="${borrowedBook.returnDate} ?: 'Not returned yet'"></span>
+      </td>
+      <td>
+        <span th:if="${borrowedBook.returnRequestedAt != null}">Pending</span>
+        <span th:if="${borrowedBook.returnRequestedAt == null and borrowedBook.returnDate == null}">Borrowed</span>
+        <span th:if="${borrowedBook.returnRequestedAt == null and borrowedBook.returnDate != null}">Returned</span>
+
+      </td>
+      <td>
+        <form th:if="${borrowedBook.returnRequestedAt == null and borrowedBook.returnDate == null}" th:action="@{/borrowed-books/request-return/{id}(id=${borrowedBook.id})}" method="post">
+          <button type="submit">Request Return</button>
+        </form>
       </td>
     </tr>
     </tbody>

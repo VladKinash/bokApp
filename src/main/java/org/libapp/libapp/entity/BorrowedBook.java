@@ -29,6 +29,9 @@ public class BorrowedBook {
     @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
 
+    @Column(name = "return_requested_at")
+    private LocalDate returnRequestedAt;
+
     public Integer getId() {
         return id;
     }
@@ -76,5 +79,10 @@ public class BorrowedBook {
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
+
+    public LocalDate getReturnRequestedAt() {return returnRequestedAt;}
+
+    public void setReturnRequestedAt(LocalDate returnRequestedAt) {this.returnRequestedAt = returnRequestedAt;}
+
 
 }

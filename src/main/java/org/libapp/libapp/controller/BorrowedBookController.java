@@ -98,6 +98,19 @@ public class BorrowedBookController {
         return "redirect:/users/profile";
     }
 
+    @PostMapping("/request-return/{id}")
+    public String requestReturn(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            BorrowedBook borrowedBook = borrowedBookService.getBorrowedBookById(id);
+            borrowedBook.setReturnRequestedAt(LocalDate.now());
+            borrowedBookService.updateBorrowedBook(id, borrowedBook);
+            redirectAttributes.addFlashAttribute("successMessage", "Return requested successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while requesting the return.");
+        }
+        return "redirect:/users/profile";
+    }
+
 
     @GetMapping("/return/{id}")
     public String showReturnBookForm(@PathVariable Integer id, Model model) {
