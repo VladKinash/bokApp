@@ -45,15 +45,16 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/register", "/", "/processRegistration", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/admin/**").hasAnyRole("ADMIN","LIBRARIAN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll()
-                        .defaultSuccessUrl("/") //it is root
+                        .defaultSuccessUrl("/")
                 )
-                .logout(LogoutConfigurer::permitAll
-                );
+                .logout(LogoutConfigurer::permitAll);
+
         return http.build();
     }
 

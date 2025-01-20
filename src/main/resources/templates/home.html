@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Book Catalog</title>
@@ -14,6 +16,18 @@
                 <button type="submit" class="logout-button">Logout</button>
             </form>
             <a th:href="@{/users/profile}" class="profile-button">My Profile</a>
+
+            <a th:href="@{/admin/manage-users}"
+               sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')"
+               class="admin-button">
+                Manage Users
+            </a>
+
+            <a th:href="@{/admin/return-requests}"
+               sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')"
+               class="admin-button">
+                Manage Return Requests
+            </a>
         </div>
     </div>
 
