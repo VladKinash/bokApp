@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div class="container">
+  <h2 th:text="'Welcome, ' + ${user.username} + '!'"></h2>
+
+  <h3>Your Borrowed Books:</h3>
+  <table>
+    <thead>
+    <tr>
+      <th>Title</th>
+      <th>Borrow Date</th>
+      <th>Due Date</th>
+      <th>Return Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="borrowedBook : ${borrowedBooks}">
+      <td th:text="${borrowedBook.book.title}"></td>
+      <td th:text="${borrowedBook.borrowDate}"></td>
+      <td th:text="${borrowedBook.dueDate}"></td>
+      <td>
+        <span th:text="${borrowedBook.returnDate} ?: 'Not returned yet'"></span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <a th:href="@{/}" class="back-button">Back to Home</a>
+
+  <form th:action="@{/logout}" method="post">
+    <button type="submit" class="logout-button">Logout</button>
+  </form>
+</div>
+</body>
+</html>

@@ -35,6 +35,7 @@ public class BorrowedBookController {
     }
 
 
+
     @GetMapping
     public String listBorrowedBooks(Model model) {
         List<BorrowedBook> borrowedBooks = borrowedBookService.getAllBorrowedBooks();
@@ -70,14 +71,31 @@ public class BorrowedBookController {
         User user = userService.getUserByUsername(currentUsername);
         Book book = bookService.getBookById(bookId);
 
-        try {
-            borrowedBookService.borrowBook(user, book);
-        } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        if (book.getCopiesAvailable() <= 0) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Sorry, this book is currently not available.");
             return "redirect:/books/" + bookId;
         }
 
-        return "redirect:/borrowed-books";
+        try {
+            borrowedBookService.borrowBook(user, book);
+            redirectAttributes.addFlashAttribute("successMessage", "You have successfully borrowed the book.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while borrowing the book.");
+            return "redirect:/books/" + bookId;
+        }
+
+        return "redirect:/users/profile";
+    }
+
+    @PostMapping("/return/{id}")
+    public String returnBook(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            borrowedBookService.returnBook(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Book returned successfully.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while returning the book.");
+        }
+        return "redirect:/users/profile";
     }
 
 
@@ -85,14 +103,10 @@ public class BorrowedBookController {
     public String showReturnBookForm(@PathVariable Integer id, Model model) {
         BorrowedBook borrowedBook = borrowedBookService.getBorrowedBookById(id);
         model.addAttribute("borrowedBook", borrowedBook);
-        return "return-book"; // "return-book.html"
+        return "return-book";
     }
 
-    @PostMapping("/return/{id}")
-    public String returnBook(@PathVariable Integer id) {
-        borrowedBookService.returnBook(id);
-        return "redirect:/borrowed-books";
-    }
+
 
     @GetMapping("/edit/{id}")
     public String showEditBorrowedBookForm(@PathVariable Integer id, Model model) {
@@ -112,5 +126,20 @@ public class BorrowedBookController {
     public String deleteBorrowedBook(@PathVariable Integer id) {
         borrowedBookService.deleteBorrowedBook(id);
         return "redirect:/borrowed-books";
+    }
+
+    @GetMapping("/profile")
+    public String showUserBorrowedBooks(Model model, RedirectAttributes redirectAttributes) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+
+        User user = userService.getUserByUsername(currentUsername);
+
+        List<BorrowedBook> borrowedBooks = borrowedBookService.getBorrowedBooksByUser(user);
+
+        model.addAttribute("user", user);
+        model.addAttribute("borrowedBooks", borrowedBooks);
+
+        return "user-profile"; // user-profile.html
     }
 }

@@ -39,7 +39,6 @@ public class AuthController {
             User registeredUser = userService.registerNewUser(registrationDto);
             return "redirect:/login?success";
         } catch (RuntimeException e) {
-            // Add the specific error message to the model
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/register";
         }
