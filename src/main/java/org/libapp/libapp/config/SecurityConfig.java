@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll()
-                        .defaultSuccessUrl("/") // Set default success URL to the root ("/")
+                        .defaultSuccessUrl("/") //it is root
                 )
                 .logout(LogoutConfigurer::permitAll
                 );
