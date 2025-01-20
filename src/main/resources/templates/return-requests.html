@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Return Requests</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+  <script>
+    function confirmReturn(borrowId) {
+      if (confirm("Are you sure you want to approve this return?")) {
+        window.location.href = "/admin/approve-return/" + borrowId;
+      }
+    }
+  </script>
+</head>
+<body>
+<div class="container">
+  <h2>Return Requests</h2>
+  <table>
+    <thead>
+    <tr>
+      <th>Book Title</th>
+      <th>Requested By</th>
+      <th>Request Date</th>
+      <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="request : ${returnRequests}">
+      <td th:text="${request.book.title}"></td>
+      <td th:text="${request.user.username}"></td>
+      <td th:text="${request.returnRequestedAt}"></td>
+      <td>
+        <button th:onclick="'confirmReturn(' + ${request.id} + ')'">Approve</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <a th:href="@{/}">Back to Home</a>
+</div>
+</body>
+</html>

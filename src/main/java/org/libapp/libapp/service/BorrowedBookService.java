@@ -10,12 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BorrowedBookService {
 
     private final BorrowedBookRepo borrowedBookRepo;
-    private final BookService bookService; // Inject BookService to manage book copies
+    private final BookService bookService;
 
     @Autowired
     public BorrowedBookService(BorrowedBookRepo borrowedBookRepo, BookService bookService) {
@@ -66,11 +67,13 @@ public class BorrowedBookService {
     }
 
 
+    @Transactional
     public BorrowedBook updateBorrowedBook(Integer id, BorrowedBook updatedBorrowedBook) {
         BorrowedBook existingBorrowedBook = getBorrowedBookById(id);
         existingBorrowedBook.setBorrowDate(updatedBorrowedBook.getBorrowDate());
         existingBorrowedBook.setDueDate(updatedBorrowedBook.getDueDate());
         existingBorrowedBook.setReturnDate(updatedBorrowedBook.getReturnDate());
+        existingBorrowedBook.setReturnRequestedAt(updatedBorrowedBook.getReturnRequestedAt()); // Update return request date
         return borrowedBookRepo.save(existingBorrowedBook);
     }
 
@@ -78,5 +81,11 @@ public class BorrowedBookService {
     public void deleteBorrowedBook(Integer id) {
         BorrowedBook borrowedBook = getBorrowedBookById(id);
         borrowedBookRepo.delete(borrowedBook);
+    }
+
+    public List<BorrowedBook> getBooksWithReturnRequested() {
+        return borrowedBookRepo.findAll().stream()
+                .filter(borrowedBook -> borrowedBook.getReturnRequestedAt() != null)
+                .collect(Collectors.toList());
     }
 }

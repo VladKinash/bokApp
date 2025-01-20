@@ -3,6 +3,7 @@ package org.libapp.libapp.service;
 import org.libapp.libapp.entity.Book;
 import org.libapp.libapp.repository.BookRepo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -47,13 +48,13 @@ public class BookService {
     public void deleteBook(Integer id) {
         bookRepo.deleteById(id);
     }
-
+    @Transactional
     public void incrementCopiesAvailable(Integer bookId, int amount) {
         Book book = getBookById(bookId);
         book.setCopiesAvailable(book.getCopiesAvailable() + amount);
         bookRepo.save(book);
     }
-
+    @Transactional
     public void decrementCopiesAvailable(Integer bookId, int amount) {
         Book book = getBookById(bookId);
         if (book.getCopiesAvailable() < amount) {
