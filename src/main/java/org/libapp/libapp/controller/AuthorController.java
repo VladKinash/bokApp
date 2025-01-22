@@ -3,11 +3,13 @@ package org.libapp.libapp.controller;
 import org.libapp.libapp.entity.Author;
 import org.libapp.libapp.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/authors")
 public class AuthorController {
 
@@ -18,10 +20,6 @@ public class AuthorController {
         this.authorService = authorService;
     }
 
-    @GetMapping
-    public List<Author> getAllAuthors() {
-        return authorService.getAllAuthors();
-    }
 
 
     @PostMapping
@@ -43,5 +41,13 @@ public class AuthorController {
     @DeleteMapping("/{id}")
     public void deleteAuthor(@PathVariable Integer id) {
         authorService.deleteAuthor(id);
+    }
+
+
+    @GetMapping
+    public String getAllAuthors(Model model) {
+        List<Author> authors = authorService.getAllAuthors();
+        model.addAttribute("authors", authors);
+        return "authors";
     }
 }

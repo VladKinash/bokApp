@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Authors</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h2>Authors</h2>
+    <div class="header-buttons">
+      <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit" class="logout-button">Logout</button>
+      </form>
+      <a th:href="@{/users/profile}" class="profile-button">My Profile</a>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+    <tr>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Biography</th>
+      <th>Date of Birth</th>
+      <th>Date of Death</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="author : ${authors}">
+      <td th:text="${author.firstName}"></td>
+      <td th:text="${author.lastName}"></td>
+      <td th:text="${author.biography}"></td>
+      <td th:text="${author.dateOfBirth}"></td>
+      <td th:text="${author.dateOfDeath}"></td>
+    </tr>
+    </tbody>
+  </table>
+  <a th:href="@{/}">Back to Catalog</a>
+</div>
+</body>
+</html>

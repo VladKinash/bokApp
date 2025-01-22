@@ -17,6 +17,8 @@
             </form>
             <a th:href="@{/users/profile}" class="profile-button">My Profile</a>
 
+            <a th:href="@{/authors}" class="authors-button">Authors</a>
+
             <a th:href="@{/admin/manage-users}"
                sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')"
                class="admin-button">
