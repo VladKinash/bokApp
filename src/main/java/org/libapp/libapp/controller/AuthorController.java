@@ -1,6 +1,7 @@
 package org.libapp.libapp.controller;
 
 import org.libapp.libapp.entity.Author;
+import org.libapp.libapp.entity.Book;
 import org.libapp.libapp.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -49,5 +50,15 @@ public class AuthorController {
         List<Author> authors = authorService.getAllAuthors();
         model.addAttribute("authors", authors);
         return "authors";
+    }
+
+    @GetMapping("/{id}/books")
+    public String getBooksByAuthor(@PathVariable Integer id, Model model) {
+        Author author = authorService.getAuthorById(id);
+        List<Book> books = authorService.getBooksByAuthorId(id);
+
+        model.addAttribute("books", books);
+        model.addAttribute("authorName", author.getFirstName() + " " + author.getLastName());
+        return "author-books";
     }
 }

@@ -1,21 +1,27 @@
 package org.libapp.libapp.service;
 
 import org.libapp.libapp.entity.Author;
+import org.libapp.libapp.entity.Book;
+import org.libapp.libapp.entity.BookAuthor;
 import org.libapp.libapp.exception.ResourceNotFoundException;
 import org.libapp.libapp.repository.AuthorRepo;
+import org.libapp.libapp.repository.BookAuthorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthorService {
 
     private final AuthorRepo authorRepo;
+    private final BookAuthorRepo bookAuthorRepo;  // Changed to final
 
     @Autowired
-    public AuthorService(AuthorRepo authorRepo) {
+    public AuthorService(AuthorRepo authorRepo, BookAuthorRepo bookAuthorRepo) {
         this.authorRepo = authorRepo;
+        this.bookAuthorRepo = bookAuthorRepo;  // Add this line
     }
 
     public List<Author> getAllAuthors() {
@@ -44,5 +50,12 @@ public class AuthorService {
     public void deleteAuthor(Integer id) {
         Author existingAuthor = getAuthorById(id);
         authorRepo.delete(existingAuthor);
+    }
+
+    public List<Book> getBooksByAuthorId(Integer authorId) {
+        return bookAuthorRepo.findByAuthorId(authorId)
+                .stream()
+                .map(BookAuthor::getBook)
+                .collect(Collectors.toList());
     }
 }

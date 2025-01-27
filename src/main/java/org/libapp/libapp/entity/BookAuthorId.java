@@ -18,6 +18,10 @@ public class BookAuthorId implements java.io.Serializable {
     public BookAuthorId(Integer bookId, Integer authorId) {
     }
 
+    public BookAuthorId() {
+
+    }
+
     public Integer getBookId() {
         return bookId;
     }

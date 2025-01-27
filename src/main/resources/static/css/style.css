@@ -146,3 +146,16 @@ th {
     border-radius: 4px;
 }
 
+.button {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 3px;
+}
+
+.button:hover {
+    background-color: #45a049;
+}
+
