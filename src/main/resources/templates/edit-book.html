@@ -10,19 +10,29 @@
 <body>
 <div class="container">
     <h2>Edit Book</h2>
-    <form th:action="@{/books/edit/{id}(id=${book.id})}" th:object="${book}" method="post">
+    <form th:action="@{'/books/edit/' + ${book.id}}" th:object="${book}" method="post">
+        <!-- Title Field -->
         <div>
             <label for="title">Title:</label>
             <input type="text" id="title" th:field="*{title}" required />
+            <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title Error</div>
         </div>
+
+        <!-- ISBN Field -->
         <div>
             <label for="isbn">ISBN:</label>
             <input type="text" id="isbn" th:field="*{isbn}" required />
+            <div th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}">ISBN Error</div>
         </div>
+
+        <!-- Publication Date Field -->
         <div>
             <label for="publicationDate">Publication Date:</label>
             <input type="date" id="publicationDate" th:field="*{publicationDate}" />
+            <div th:if="${#fields.hasErrors('publicationDate')}" th:errors="*{publicationDate}">Publication Date Error</div>
         </div>
+
+        <!-- Publisher Selection -->
         <div>
             <label for="publisher">Publisher:</label>
             <select id="publisher" th:field="*{publisher.id}" required>
@@ -33,37 +43,55 @@
                         th:selected="${publisher.id} == ${book.publisher.id}">
                 </option>
             </select>
+            <div th:if="${#fields.hasErrors('publisher.id')}" th:errors="*{publisher.id}">Publisher Error</div>
         </div>
+
+        <!-- Description Field -->
         <div>
             <label for="description">Description:</label>
             <textarea id="description" th:field="*{description}"></textarea>
+            <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</div>
         </div>
+
+        <!-- Cover Image URL Field -->
         <div>
             <label for="coverImageUrl">Cover Image URL:</label>
             <input type="url" id="coverImageUrl" th:field="*{coverImageUrl}" />
+            <div th:if="${#fields.hasErrors('coverImageUrl')}" th:errors="*{coverImageUrl}">Cover Image URL Error</div>
         </div>
+
+        <!-- Authors Selection -->
         <div>
-            <label for="authorId">Author:</label>
-            <select id="authorId" th:field="*{authorId}" required>
-                <option value="" disabled>Select an Author</option>
+            <label for="authorIds">Authors:</label>
+            <select id="authorIds" name="authorIds" multiple required>
+                <option value="" disabled>Select Authors</option>
                 <option th:each="author : ${authors}"
                         th:value="${author.id}"
-                        th:text="${author.firstName + ' ' + author.lastName}"
-                        th:selected="${author.id} == ${book.authorId}">
+                        th:text="${author.firstName} + ' ' + ${author.lastName}"
+                        th:selected="${selectedAuthorIds.contains(author.id)}">
                 </option>
             </select>
+            <!-- Removed Thymeleaf errors binding for authorIds -->
         </div>
+
+        <!-- Genre Field -->
         <div>
             <label for="genre">Genre:</label>
             <input type="text" id="genre" th:field="*{genre}" />
+            <div th:if="${#fields.hasErrors('genre')}" th:errors="*{genre}">Genre Error</div>
         </div>
+
+        <!-- Copies Available Field -->
         <div>
             <label for="copiesAvailable">Copies Available:</label>
             <input type="number" id="copiesAvailable" th:field="*{copiesAvailable}" min="0" required />
+            <div th:if="${#fields.hasErrors('copiesAvailable')}" th:errors="*{copiesAvailable}">Copies Available Error</div>
         </div>
+
+        <!-- Form Buttons -->
         <div>
             <button type="submit">Update Book</button>
-            <a th:href="@{/}">Cancel</a>
+            <a th:href="@{'/books/' + ${book.id}}">Cancel</a>
         </div>
     </form>
 </div>

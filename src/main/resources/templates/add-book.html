@@ -42,9 +42,9 @@
             <input type="url" id="coverImageUrl" th:field="*{coverImageUrl}" />
         </div>
         <div>
-            <label for="authorId">Author:</label>
-            <select id="authorId" th:field="*{authorId}" required>
-                <option value="" disabled selected>Select an Author</option>
+            <label for="authorIds">Authors:</label>
+            <select id="authorIds" name="authorIds" multiple required>
+                <option value="" disabled selected>Select Authors</option>
                 <option th:each="author : ${authors}"
                         th:value="${author.id}"
                         th:text="${author.firstName + ' ' + author.lastName}">

@@ -8,7 +8,7 @@
 <body>
 <div class="container">
     <div class="header">
-        <h2>Books by <span th:text="${authorName}"></span></h2>
+        <h2>Books by <span th:text="${authorName}">Author Name</span></h2>
         <div class="header-buttons">
             <a th:href="@{/authors}" class="button">Back to Authors</a>
             <a th:href="@{/}" class="button">Back to Catalog</a>
@@ -24,8 +24,15 @@
         </thead>
         <tbody>
         <tr th:each="book : ${books}">
-            <td><a th:href="@{/books/{id}(id=${book.id})}" th:text="${book.title}"></a></td>
-            <td th:text="${book.copiesAvailable}"></td>
+            <td>
+                <a th:href="@{/books/{id}(id=${book.id})}" th:text="${book.title}">
+                    Book Title
+                </a>
+            </td>
+            <td th:text="${book.copiesAvailable}">0</td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(books)}">
+            <td colspan="2">No books found for this author.</td>
         </tr>
         </tbody>
     </table>

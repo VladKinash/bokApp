@@ -3,13 +3,19 @@ package org.libapp.libapp.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "authors", schema = "bookapp")
 public class Author {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-generate IDs
     @Column(name = "author_id", nullable = false)
     private Integer id;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<BookAuthor> bookAuthors = new HashSet<>();
 
     @Lob
     @Column(name = "first_name", nullable = false)
@@ -76,5 +82,14 @@ public class Author {
     public void setDateOfDeath(LocalDate dateOfDeath) {
         this.dateOfDeath = dateOfDeath;
     }
+
+    public Set<BookAuthor> getBookAuthors() {
+        return bookAuthors;
+    }
+
+    public void setBookAuthors(Set<BookAuthor> bookAuthors) {
+        this.bookAuthors = bookAuthors;
+    }
+
 
 }

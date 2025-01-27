@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
 public class AuthorService {
 
     private final AuthorRepo authorRepo;
-    private final BookAuthorRepo bookAuthorRepo;  // Changed to final
+    private final BookAuthorRepo bookAuthorRepo;
 
     @Autowired
     public AuthorService(AuthorRepo authorRepo, BookAuthorRepo bookAuthorRepo) {
         this.authorRepo = authorRepo;
-        this.bookAuthorRepo = bookAuthorRepo;  // Add this line
+        this.bookAuthorRepo = bookAuthorRepo;
     }
 
     public List<Author> getAllAuthors() {

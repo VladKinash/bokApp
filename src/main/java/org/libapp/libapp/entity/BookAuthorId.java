@@ -1,26 +1,22 @@
 package org.libapp.libapp.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import org.hibernate.Hibernate;
-
+import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class BookAuthorId implements java.io.Serializable {
-    private static final long serialVersionUID = 4273177815923102L;
-    @Column(name = "book_id", nullable = false)
-    private Integer bookId;
+public class BookAuthorId implements Serializable {
 
-    @Column(name = "author_id", nullable = false)
+    private Integer bookId;
     private Integer authorId;
 
+    public BookAuthorId() {}
+
     public BookAuthorId(Integer bookId, Integer authorId) {
+        this.bookId = bookId;
+        this.authorId = authorId;
     }
 
-    public BookAuthorId() {
-
-    }
 
     public Integer getBookId() {
         return bookId;
@@ -38,18 +34,22 @@ public class BookAuthorId implements java.io.Serializable {
         this.authorId = authorId;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        BookAuthorId entity = (BookAuthorId) o;
-        return Objects.equals(this.authorId, entity.authorId) &&
-                Objects.equals(this.bookId, entity.bookId);
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BookAuthorId that = (BookAuthorId) o;
+
+        if (!Objects.equals(bookId, that.bookId)) return false;
+        return Objects.equals(authorId, that.authorId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(authorId, bookId);
+        int result = bookId != null ? bookId.hashCode() : 0;
+        result = 31 * result + (authorId != null ? authorId.hashCode() : 0);
+        return result;
     }
-
 }

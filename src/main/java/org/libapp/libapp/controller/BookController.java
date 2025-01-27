@@ -2,6 +2,7 @@ package org.libapp.libapp.controller;
 
 import org.libapp.libapp.entity.Author;
 import org.libapp.libapp.entity.Book;
+import org.libapp.libapp.entity.BookAuthor;
 import org.libapp.libapp.entity.Publisher;
 import org.libapp.libapp.service.AuthorService;
 import org.libapp.libapp.service.BookService;
@@ -9,11 +10,14 @@ import org.libapp.libapp.service.PublisherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/books")
@@ -35,14 +39,14 @@ public class BookController {
         model.addAttribute("book", book);
 
         if (book.getPublisher() != null) {
-            Publisher publisher = publisherService.getPublisherById(book.getPublisher().getId());
-            model.addAttribute("publisher", publisher);
+            model.addAttribute("publisher", book.getPublisher());
         }
 
-        if (book.getAuthorId() != null) {
-            Author author = authorService.getAuthorById(book.getAuthorId());
-            model.addAttribute("author", author);
-        }
+        // Fetch authors associated with the book
+        Set<Author> authors = book.getBookAuthors().stream()
+                .map(BookAuthor::getAuthor)
+                .collect(Collectors.toSet());
+        model.addAttribute("authors", authors);
 
         return "book-details";
     }
@@ -60,10 +64,13 @@ public class BookController {
         return "add-book";
     }
 
-    // Handle Add Book Submission
     @PostMapping("/add")
     @Secured({"ROLE_ADMIN", "ROLE_LIBRARIAN"})
-    public String addBook(@ModelAttribute("book") Book book, BindingResult result, Model model) {
+    @Transactional
+    public String addBook(@ModelAttribute("book") Book book,
+                          @RequestParam(value = "authorIds", required = false) List<Integer> authorIds,
+                          BindingResult result,
+                          Model model) {
         if (result.hasErrors()) {
             List<Author> authors = authorService.getAllAuthors();
             List<Publisher> publishers = publisherService.getAllPublishers();
@@ -72,17 +79,23 @@ public class BookController {
             return "add-book";
         }
 
-        // Set Publisher object based on selected publisher ID
         if (book.getPublisher() != null && book.getPublisher().getId() != null) {
             Publisher publisher = publisherService.getPublisherById(book.getPublisher().getId());
             book.setPublisher(publisher);
         }
 
-        bookService.addBook(book);
-        return "redirect:/";
+        Book savedBook = bookService.addBook(book);
+
+        if (authorIds != null && !authorIds.isEmpty()) {
+            for (Integer authorId : authorIds) {
+                Author author = authorService.getAuthorById(authorId);
+                savedBook.addAuthor(author);
+            }
+        }
+
+        return "redirect:/books/" + savedBook.getId();
     }
 
-    // Display Edit Book Form
     @GetMapping("/edit/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_LIBRARIAN"})
     public String showEditBookForm(@PathVariable Integer id, Model model) {
@@ -92,43 +105,64 @@ public class BookController {
         model.addAttribute("book", book);
         model.addAttribute("authors", authors);
         model.addAttribute("publishers", publishers);
+
+        // Collect author IDs associated with the book
+        Set<Integer> selectedAuthorIds = book.getBookAuthors().stream()
+                .map(ba -> ba.getAuthor().getId())
+                .collect(Collectors.toSet());
+        model.addAttribute("selectedAuthorIds", selectedAuthorIds);
+
         return "edit-book";
     }
 
-    // Handle Edit Book Submission
     @PostMapping("/edit/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_LIBRARIAN"})
-    public String editBook(@PathVariable Integer id, @ModelAttribute("book") Book updatedBook, BindingResult result, Model model) {
+    @Transactional
+    public String editBook(@PathVariable Integer id,
+                           @ModelAttribute("book") Book updatedBook,
+                           BindingResult result,
+                           @RequestParam(value = "authorIds", required = false) List<Integer> authorIds,
+                           Model model) {
         if (result.hasErrors()) {
             List<Author> authors = authorService.getAllAuthors();
             List<Publisher> publishers = publisherService.getAllPublishers();
             model.addAttribute("authors", authors);
             model.addAttribute("publishers", publishers);
+
+            Set<Integer> selectedAuthorIds = updatedBook.getBookAuthors().stream()
+                    .map(ba -> ba.getAuthor().getId())
+                    .collect(Collectors.toSet());
+            model.addAttribute("selectedAuthorIds", selectedAuthorIds);
+
             return "edit-book";
         }
 
-        // Set Publisher object based on selected publisher ID
         if (updatedBook.getPublisher() != null && updatedBook.getPublisher().getId() != null) {
             Publisher publisher = publisherService.getPublisherById(updatedBook.getPublisher().getId());
             updatedBook.setPublisher(publisher);
         }
 
-        bookService.updateBook(id, updatedBook);
-        return "redirect:/";
+        Book book = bookService.updateBook(id, updatedBook);
+
+        book.getBookAuthors().clear();
+
+        if (authorIds != null && !authorIds.isEmpty()) {
+            for (Integer authorId : authorIds) {
+                Author author = authorService.getAuthorById(authorId);
+                book.addAuthor(author);
+            }
+        }
+
+        return "redirect:/books/" + book.getId();
     }
 
-    // Handle Delete Book
     @PostMapping("/delete/{id}")
     @Secured({"ROLE_ADMIN", "ROLE_LIBRARIAN"})
+    @Transactional
     public String deleteBook(@PathVariable Integer id) {
+        Book book = bookService.getBookById(id);
+        book.getBookAuthors().clear();
         bookService.deleteBook(id);
         return "redirect:/";
-    }
-
-    @GetMapping
-    public String getAllBooks(Model model) {
-        List<Book> books = bookService.getAllBooks();
-        model.addAttribute("books", books);
-        return "home"; // Assuming the home page is named 'home.html'
     }
 }
