@@ -3,6 +3,7 @@ package org.libapp.libapp.controller;
 import org.libapp.libapp.entity.BorrowedBook;
 import org.libapp.libapp.service.BookService;
 import org.libapp.libapp.service.BorrowedBookService;
+import org.libapp.libapp.service.RoleService;
 import org.libapp.libapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,17 +23,23 @@ public class AdminController {
     private final UserService userService;
     private final BorrowedBookService borrowedBookService;
     private final BookService bookService;
+    private final RoleService roleService; // Add this line
 
     @Autowired
-    public AdminController(UserService userService, BorrowedBookService borrowedBookService, BookService bookService) {
+    public AdminController(UserService userService,
+                           BorrowedBookService borrowedBookService,
+                           BookService bookService,
+                           RoleService roleService) { // Add RoleService parameter
         this.userService = userService;
         this.borrowedBookService = borrowedBookService;
         this.bookService = bookService;
+        this.roleService = roleService; // Initialize roleService
     }
 
     @GetMapping("/manage-users")
     public String manageUsers(Model model) {
         model.addAttribute("allUsers", userService.getAllUsers());
+        model.addAttribute("allRoles", roleService.getAllRoles());
         return "manage-users";
     }
 

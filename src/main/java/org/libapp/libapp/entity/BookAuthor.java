@@ -55,7 +55,6 @@ public class BookAuthor {
         this.author = author;
     }
 
-    // Override equals and hashCode based on id
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

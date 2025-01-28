@@ -1,6 +1,7 @@
 package org.libapp.libapp.service;
 
 import org.libapp.libapp.dto.UserRegistrationDto;
+import org.libapp.libapp.entity.Role;
 import org.libapp.libapp.entity.User;
 import org.libapp.libapp.entity.UserRole;
 import org.libapp.libapp.entity.UserRoleId;
@@ -9,6 +10,7 @@ import org.libapp.libapp.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -55,13 +57,28 @@ public class UserService {
     }
 
     public User updateUser(Integer id, User updatedUser) {
-        User existingUser = getUserById(id);
-        existingUser.setUsername(updatedUser.getUsername());
-        existingUser.setEmail(updatedUser.getEmail());
-        existingUser.setPasswordHash(updatedUser.getPasswordHash());
-        existingUser.setProfilePic(updatedUser.getProfilePic());
-        existingUser.setBio(updatedUser.getBio());
-        return userRepo.save(existingUser);
+        User user = getUserById(id);
+        if(user != null){
+            user.setUsername(updatedUser.getUsername());
+            user.setEmail(updatedUser.getEmail());
+            user.setPasswordHash(updatedUser.getPasswordHash());
+            user.setProfilePic(updatedUser.getProfilePic());
+            user.setBio(updatedUser.getBio());
+            return userRepo.save(user);
+        }
+        return null;
+    }
+
+    @Transactional
+    public void updateUserRoles(User user, List<Role> selectedRoles) {
+        user.getUserRoles().clear();
+        for(Role role : selectedRoles){
+            UserRole userRole = new UserRole();
+            userRole.setUser(user);
+            userRole.setRole(role);
+            user.getUserRoles().add(userRole);
+        }
+        userRepo.save(user);
     }
 
     public void deleteUser(Integer id) {

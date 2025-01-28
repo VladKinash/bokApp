@@ -10,7 +10,7 @@ import java.util.Set;
 @Table(name = "authors", schema = "bookapp")
 public class Author {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-generate IDs
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "author_id", nullable = false)
     private Integer id;
 

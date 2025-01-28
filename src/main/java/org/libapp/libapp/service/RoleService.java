@@ -31,6 +31,10 @@ public class RoleService {
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with id: " + id));
     }
 
+    public List<Role> getRolesByIds(List<Integer> ids){
+        return roleRepo.findAllById(ids);
+    }
+
     public Role updateRole(Integer id, Role updatedRole) {
         Role existingRole = getRoleById(id);
         existingRole.setName(updatedRole.getName());

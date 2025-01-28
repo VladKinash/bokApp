@@ -51,7 +51,6 @@ public class BookController {
         return "book-details";
     }
 
-    // Display Add Book Form
     @GetMapping("/add")
     @Secured({"ROLE_ADMIN", "ROLE_LIBRARIAN"})
     public String showAddBookForm(Model model) {
@@ -106,7 +105,6 @@ public class BookController {
         model.addAttribute("authors", authors);
         model.addAttribute("publishers", publishers);
 
-        // Collect author IDs associated with the book
         Set<Integer> selectedAuthorIds = book.getBookAuthors().stream()
                 .map(ba -> ba.getAuthor().getId())
                 .collect(Collectors.toSet());

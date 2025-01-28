@@ -16,11 +16,14 @@ public class UserRoleId implements java.io.Serializable {
     private Integer roleId;
 
     public UserRoleId(Integer userId, Integer roleId) {
+        this.userId = userId;
+        this.roleId = roleId;
     }
 
     public UserRoleId() {
 
     }
+
 
     public Integer getUserId() {
         return userId;
