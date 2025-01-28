@@ -16,21 +16,17 @@
                 <button type="submit" class="logout-button">Logout</button>
             </form>
             <a th:href="@{/users/profile}" class="profile-button">My Profile</a>
-
             <a th:href="@{/authors}" class="authors-button">Authors</a>
-
             <a th:href="@{/admin/manage-users}"
                sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')"
                class="admin-button">
                 Manage Users
             </a>
-
             <a th:href="@{/admin/return-requests}"
                sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')"
                class="admin-button">
                 Manage Return Requests
             </a>
-
             <!-- Add Book Button -->
             <a th:href="@{/books/add}"
                sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')"
@@ -38,6 +34,16 @@
                 Add Book
             </a>
         </div>
+    </div>
+
+    <!-- Search Form -->
+    <div class="search-form">
+        <form th:action="@{/books/search}" method="get">
+            <input type="text" name="keyword" placeholder="Search by title, author, or ISBN" />
+            <input type="date" name="publicationDateFrom" placeholder="Publication Date From" />
+            <input type="date" name="publicationDateTo" placeholder="Publication Date To" />
+            <button type="submit">Search</button>
+        </form>
     </div>
 
     <table>

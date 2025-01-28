@@ -45,7 +45,7 @@ public class User {
 
 
     public void clearRoles() {
-        this.userRoles.clear(); // Clear the roles before deletion
+        this.userRoles.clear(); //clear roles before deletion because of one to many relationship
     }
 
     public Set<UserRole> getUserRoles() {

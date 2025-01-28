@@ -23,17 +23,17 @@ public class AdminController {
     private final UserService userService;
     private final BorrowedBookService borrowedBookService;
     private final BookService bookService;
-    private final RoleService roleService; // Add this line
+    private final RoleService roleService;
 
     @Autowired
     public AdminController(UserService userService,
                            BorrowedBookService borrowedBookService,
                            BookService bookService,
-                           RoleService roleService) { // Add RoleService parameter
+                           RoleService roleService) {
         this.userService = userService;
         this.borrowedBookService = borrowedBookService;
         this.bookService = bookService;
-        this.roleService = roleService; // Initialize roleService
+        this.roleService = roleService;
     }
 
     @GetMapping("/manage-users")
