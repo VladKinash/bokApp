@@ -1,10 +1,16 @@
 package org.libapp.libapp.entity;
 
 import jakarta.persistence.*;
+import org.libapp.libapp.repository.RoleRepo;
+
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "roles", schema = "bookapp")
 public class Role {
+
+
     @Id
     @Column(name = "id", nullable = false)
     private Integer id;
@@ -28,5 +34,8 @@ public class Role {
     public void setName(String name) {
         this.name = name;
     }
+
+
+
 
 }

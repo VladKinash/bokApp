@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users", schema = "bookapp")
@@ -13,15 +16,15 @@ public class User {
     @Column(name = "user_id", nullable = false)
     private Integer id;
 
-    @Lob
+
     @Column(name = "username", nullable = false)
     private String username;
 
-    @Lob
+
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Lob
+
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
@@ -36,6 +39,29 @@ public class User {
     @Lob
     @Column(name = "bio")
     private String bio;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserRole> userRoles = new HashSet<>();
+
+
+    public void clearRoles() {
+        this.userRoles.clear(); // Clear the roles before deletion
+    }
+
+    public Set<UserRole> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(Set<UserRole> userRoles) {
+        this.userRoles = userRoles;
+    }
+
+    public Set<Role> getRoles() {
+        return userRoles.stream()
+                .map(UserRole::getRole)
+                .collect(Collectors.toSet());
+    }
+
 
     public Integer getId() {
         return id;
@@ -92,7 +118,6 @@ public class User {
     public void setBio(String bio) {
         this.bio = bio;
     }
-
 
 
 }

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Book</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div class="container">
+    <h2>Edit Book</h2>
+    <form th:action="@{'/books/edit/' + ${book.id}}" th:object="${book}" method="post">
+        <div>
+            <label for="title">Title:</label>
+            <input type="text" id="title" th:field="*{title}" required />
+            <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title Error</div>
+        </div>
+
+        <div>
+            <label for="isbn">ISBN:</label>
+            <input type="text" id="isbn" th:field="*{isbn}" required />
+            <div th:if="${#fields.hasErrors('isbn')}" th:errors="*{isbn}">ISBN Error</div>
+        </div>
+
+        <div>
+            <label for="publicationDate">Publication Date:</label>
+            <input type="date" id="publicationDate" th:field="*{publicationDate}" />
+            <div th:if="${#fields.hasErrors('publicationDate')}" th:errors="*{publicationDate}">Publication Date Error</div>
+        </div>
+
+        <div>
+            <label for="publisher">Publisher:</label>
+            <select id="publisher" th:field="*{publisher.id}" required>
+                <option value="" disabled>Select a Publisher</option>
+                <option th:each="publisher : ${publishers}"
+                        th:value="${publisher.id}"
+                        th:text="${publisher.publisherName}"
+                        th:selected="${publisher.id} == ${book.publisher.id}">
+                </option>
+            </select>
+            <div th:if="${#fields.hasErrors('publisher.id')}" th:errors="*{publisher.id}">Publisher Error</div>
+        </div>
+
+        <div>
+            <label for="description">Description:</label>
+            <textarea id="description" th:field="*{description}"></textarea>
+            <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</div>
+        </div>
+
+        <div>
+            <label for="coverImageUrl">Cover Image URL:</label>
+            <input type="url" id="coverImageUrl" th:field="*{coverImageUrl}" />
+            <div th:if="${#fields.hasErrors('coverImageUrl')}" th:errors="*{coverImageUrl}">Cover Image URL Error</div>
+        </div>
+
+        <div>
+            <label for="authorIds">Authors:</label>
+            <select id="authorIds" name="authorIds" multiple required>
+                <option value="" disabled>Select Authors</option>
+                <option th:each="author : ${authors}"
+                        th:value="${author.id}"
+                        th:text="${author.firstName} + ' ' + ${author.lastName}"
+                        th:selected="${selectedAuthorIds.contains(author.id)}">
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="genre">Genre:</label>
+            <input type="text" id="genre" th:field="*{genre}" />
+            <div th:if="${#fields.hasErrors('genre')}" th:errors="*{genre}">Genre Error</div>
+        </div>
+
+        <div>
+            <label for="copiesAvailable">Copies Available:</label>
+            <input type="number" id="copiesAvailable" th:field="*{copiesAvailable}" min="0" required />
+            <div th:if="${#fields.hasErrors('copiesAvailable')}" th:errors="*{copiesAvailable}">Copies Available Error</div>
+        </div>
+
+        <div>
+            <button type="submit">Update Book</button>
+            <a th:href="@{'/books/' + ${book.id}}">Cancel</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

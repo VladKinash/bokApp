@@ -3,6 +3,8 @@ package org.libapp.libapp.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "books", schema = "bookapp", uniqueConstraints = {
@@ -39,9 +41,6 @@ public class Book {
     @Lob
     @Column(name = "cover_image_url")
     private String coverImageUrl;
-
-    @Column(name = "author_id")
-    private Integer authorId;
 
     @Lob
     @Column(name = "genre")
@@ -103,13 +102,8 @@ public class Book {
         this.coverImageUrl = coverImageUrl;
     }
 
-    public Integer getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(Integer authorId) {
-        this.authorId = authorId;
-    }
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<BookAuthor> bookAuthors = new HashSet<>();
 
     public String getGenre() {
         return genre;
@@ -130,4 +124,30 @@ public class Book {
     public void setCopiesAvailable(Integer copiesAvailable) {
         this.copiesAvailable = copiesAvailable;
     }
+
+    public Set<BookAuthor> getBookAuthors() {
+        return bookAuthors;
+    }
+
+    public void setBookAuthors(Set<BookAuthor> bookAuthors) {
+        this.bookAuthors = bookAuthors;
+    }
+
+    public void addAuthor(Author author) {
+        BookAuthor bookAuthor = new BookAuthor(this, author);
+        if (bookAuthors.add(bookAuthor)) {
+            author.getBookAuthors().add(bookAuthor);
+        }
+    }
+
+    public void removeAuthor(Author author) {
+        BookAuthor bookAuthor = new BookAuthor(this, author);
+        if (bookAuthors.remove(bookAuthor)) {
+            author.getBookAuthors().remove(bookAuthor);
+            bookAuthor.setBook(null);
+            bookAuthor.setAuthor(null);
+        }
+    }
+
+
 }

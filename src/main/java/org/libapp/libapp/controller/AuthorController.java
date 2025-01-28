@@ -1,13 +1,18 @@
 package org.libapp.libapp.controller;
 
 import org.libapp.libapp.entity.Author;
+import org.libapp.libapp.entity.Book;
 import org.libapp.libapp.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/authors")
 public class AuthorController {
 
@@ -19,29 +24,62 @@ public class AuthorController {
     }
 
     @GetMapping
-    public List<Author> getAllAuthors() {
-        return authorService.getAllAuthors();
+    public String getAllAuthors(Model model) {
+        List<Author> authors = authorService.getAllAuthors();
+        model.addAttribute("authors", authors);
+        return "authors";
     }
 
-
-    @PostMapping
-    public Author createAuthor(@RequestBody Author author) {
-        return authorService.addAuthor(author);
+    @GetMapping("/add")
+    @Secured({"ROLE_ADMIN", "ROLE_LIBRARIAN"})
+    public String showAddAuthorForm(Model model) {
+        Author author = new Author();
+        model.addAttribute("author", author);
+        return "add-author";
     }
 
-    @GetMapping("/{id}")
-    public Author getAuthorById(@PathVariable Integer id) {
-        return authorService.getAuthorById(id);
+    @PostMapping("/add")
+    @Secured({"ROLE_ADMIN", "ROLE_LIBRARIAN"})
+    public String addAuthor(@ModelAttribute("author") Author author, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "add-author";
+        }
+        authorService.addAuthor(author);
+        return "redirect:/authors";
     }
 
-
-    @PutMapping("/{id}")
-    public Author updateAuthor(@PathVariable Integer id, @RequestBody Author updatedAuthor) {
-        return authorService.updateAuthor(id, updatedAuthor);
+    @GetMapping("/edit/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_LIBRARIAN"})
+    public String showEditAuthorForm(@PathVariable Integer id, Model model) {
+        Author author = authorService.getAuthorById(id);
+        model.addAttribute("author", author);
+        return "edit-author";
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteAuthor(@PathVariable Integer id) {
-        authorService.deleteAuthor(id);
+    @PostMapping("/edit/{id}")
+    @Secured({"ROLE_ADMIN", "ROLE_LIBRARIAN"})
+    public String editAuthor(@PathVariable Integer id, @ModelAttribute("author") Author updatedAuthor, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "edit-author";
+        }
+        authorService.updateAuthor(id, updatedAuthor);
+        return "redirect:/authors";
     }
+
+        @PostMapping("/delete/{id}")
+        @Secured({"ROLE_ADMIN", "ROLE_LIBRARIAN"})
+        public String deleteAuthor(@PathVariable Integer id) {
+            authorService.deleteAuthor(id);
+            return "redirect:/authors";
+        }
+
+        @GetMapping("/{id}/books")
+        public String getBooksByAuthor(@PathVariable Integer id, Model model) {
+            Author author = authorService.getAuthorById(id);
+            List<Book> books = authorService.getBooksByAuthorId(id);
+
+            model.addAttribute("books", books);
+            model.addAttribute("authorName", author.getFirstName() + " " + author.getLastName());
+            return "author-books";
+        }
 }
