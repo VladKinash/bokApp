@@ -3,23 +3,28 @@ package org.libapp.libapp.controller;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
-import org.libapp.libapp.entity.Author;
-import org.libapp.libapp.entity.Book;
-import org.libapp.libapp.entity.BookAuthor;
-import org.libapp.libapp.entity.Publisher;
+import org.libapp.libapp.entity.*;
 import org.libapp.libapp.repository.BookRepo;
+import org.libapp.libapp.repository.RatingRepo;
 import org.libapp.libapp.service.AuthorService;
 import org.libapp.libapp.service.BookService;
 import org.libapp.libapp.service.PublisherService;
+import org.libapp.libapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -29,18 +34,23 @@ import java.util.stream.Collectors;
 @RequestMapping("/books")
 public class BookController {
 
-    @Autowired
-    private BookService bookService;
+    private final BookService bookService;
     private final BookRepo bookRepo;
+    private final UserService userService;
+    private final AuthorService authorService;
+    private final PublisherService publisherService;
+    private final RatingRepo ratingRepository;
 
     @Autowired
-    private AuthorService authorService; // Inject AuthorService
-
-    @Autowired
-    private PublisherService publisherService; // Inject PublisherService
-
-    public BookController(BookRepo bookRepo) {
+    public BookController(BookService bookService, BookRepo bookRepo, UserService userService,
+                          AuthorService authorService, PublisherService publisherService,
+                          RatingRepo ratingRepository) {
+        this.bookService = bookService;
         this.bookRepo = bookRepo;
+        this.userService = userService;
+        this.authorService = authorService;
+        this.publisherService = publisherService;
+        this.ratingRepository = ratingRepository;
     }
 
     @GetMapping("/{id}")
@@ -57,7 +67,41 @@ public class BookController {
                 .collect(Collectors.toSet());
         model.addAttribute("authors", authors);
 
+        Double averageRating = ratingRepository.findAverageRatingByBookId(id);
+        model.addAttribute("averageRating", averageRating != null ? averageRating : 0.0);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            User user = userService.getUserByUsername(authentication.getName());
+            if (user != null) {
+                boolean hasRated = ratingRepository.existsByBookIdAndUserId(id, user.getId());
+                model.addAttribute("hasRated", hasRated);
+            }
+        }
+
         return "book-details";
+    }
+
+    @PostMapping("/{id}/rate")
+    public String submitRating(@PathVariable Integer id,
+                               @RequestParam("rating") BigDecimal rating,
+                               RedirectAttributes redirectAttributes) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.getUserByUsername(authentication.getName());
+
+        try {
+            Rating newRating = new Rating();
+            newRating.setBook(bookService.getBookById(id));
+            newRating.setUser(user);
+            newRating.setRating(rating);
+            newRating.setCreatedAt(Instant.now());
+
+            ratingRepository.save(newRating);
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "You've already rated this book!");
+        }
+
+        return "redirect:/books/" + id;
     }
 
     @GetMapping("/add")
