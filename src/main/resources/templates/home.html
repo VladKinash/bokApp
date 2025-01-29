@@ -4,69 +4,107 @@
       lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Catalog</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h2>Book Catalog</h2>
-        <div class="header-buttons">
-            <form th:action="@{/logout}" method="post" style="display: inline;">
-                <button type="submit" class="logout-button">Logout</button>
-            </form>
-            <a th:href="@{/users/profile}" class="profile-button">My Profile</a>
-            <a th:href="@{/authors}" class="authors-button">Authors</a>
-            <a th:href="@{/admin/manage-users}"
-               sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')"
-               class="admin-button">
-                Manage Users
-            </a>
-            <a th:href="@{/admin/return-requests}"
-               sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')"
-               class="admin-button">
-                Manage Return Requests
-            </a>
-            <!-- Add Book Button -->
-            <a th:href="@{/books/add}"
-               sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')"
-               class="add-book-button">
-                Add Book
-            </a>
+<div class="page-container">
+    <header class="main-header">
+        <div class="header-content">
+            <h1 class="site-title">Book Catalog</h1>
+            <nav class="header-nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="nav-button nav-button--logout">Logout</button>
+                        </form>
+                    </li>
+                    <li class="nav-item"><a th:href="@{/users/profile}" class="nav-link">My Profile</a></li>
+                    <li class="nav-item"><a th:href="@{/authors}" class="nav-link">Authors</a></li>
+                    <li class="nav-item" sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')">
+                        <a th:href="@{/admin/manage-users}" class="nav-link">Manage Users</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')">
+                        <a th:href="@{/admin/return-requests}" class="nav-link">Manage Return Requests</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')">
+                        <a th:href="@{/books/add}" class="nav-link">Add Book</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="notification-area" th:if="${unreadCount > 0}">
+                <div class="notification-container">
+                    <i class="fas fa-bell notification-icon"></i>
+                    <span class="notification-badge" th:text="${unreadCount}"></span>
+                </div>
+                <div class="notification-dropdown">
+                    <ul class="notification-list" th:if="${unreadNotifications != null and !unreadNotifications.isEmpty()}">
+                        <li class="notification-item" th:each="notification : ${unreadNotifications}">
+                            <span class="notification-message" th:text="${notification.message}"></span>
+                            <small class="notification-timestamp" th:text="${#dates.format(notification.createdAt, 'dd-MMM-yyyy HH:mm')}"></small>
+                        </li>
+                    </ul>
+                    <div class="notification-empty" th:if="${unreadNotifications == null or unreadNotifications.isEmpty()}">
+                        No new notifications.
+                    </div>
+                    <a th:href="@{/notifications}" class="notification-link">See all notifications</a>
+                </div>
+            </div>
         </div>
-    </div>
+    </header>
 
-    <!-- Search Form -->
-    <div class="search-form">
-        <form th:action="@{/books/search}" method="get">
-            <input type="text" name="keyword" placeholder="Search by title, author, or ISBN" />
-            <input type="date" name="publicationDateFrom" placeholder="Publication Date From" />
-            <input type="date" name="publicationDateTo" placeholder="Publication Date To" />
-            <button type="submit">Search</button>
-        </form>
-    </div>
-
-    <table>
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Copies Available</th>
-            <th sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="book : ${books}">
-            <td><a th:href="@{/books/{id}(id=${book.id})}" th:text="${book.title}"></a></td>
-            <td th:text="${book.copiesAvailable}"></td>
-            <td sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')">
-                <a th:href="@{/books/edit/{id}(id=${book.id})}" class="edit-button">Edit</a>
-                <form th:action="@{/books/delete/{id}(id=${book.id})}" method="post" style="display: inline;">
-                    <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this book?');">Delete</button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <main class="main-content">
+        <div class="table-container">
+            <table class="data-table">
+                <thead class="data-table__head">
+                <tr class="data-table__row">
+                    <th class="data-table__header">Title</th>
+                    <th class="data-table__header">Copies Available</th>
+                    <th class="data-table__header" sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')">Actions</th>
+                </tr>
+                </thead>
+                <tbody class="data-table__body">
+                <tr class="data-table__row" th:each="book : ${books}">
+                    <td class="data-table__cell"><a th:href="@{/books/{id}(id=${book.id})}" th:text="${book.title}" class="data-table__link"></a></td>
+                    <td class="data-table__cell" th:text="${book.copiesAvailable}"></td>
+                    <td class="data-table__cell" sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')">
+                        <a th:href="@{/books/edit/{id}(id=${book.id})}" class="button button--edit">Edit</a>
+                        <form th:action="@{/books/delete/{id}(id=${book.id})}" method="post" class="data-table__form">
+                            <button type="submit" class="button button--delete" onclick="return confirm('Are you sure you want to delete this book?');">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
 </div>
+
+<script th:inline="javascript">
+    const notificationContainer = document.querySelector('.notification-container');
+    const notificationDropdown = document.querySelector('.notification-dropdown');
+
+    function toggleNotificationDropdown() {
+        notificationDropdown.style.display = notificationDropdown.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function hideNotificationDropdown(event) {
+        if (notificationDropdown && !notificationContainer.contains(event.target) && !notificationDropdown.contains(event.target)) {
+            notificationDropdown.style.display = 'none';
+        }
+    }
+
+    if (notificationContainer) {
+        notificationContainer.addEventListener('click', (event) => {
+            event.stopPropagation();
+            toggleNotificationDropdown();
+        });
+    }
+
+    document.addEventListener('click', hideNotificationDropdown);
+</script>
 </body>
 </html>

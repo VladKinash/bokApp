@@ -2,41 +2,52 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Return Requests</title>
   <link rel="stylesheet" th:href="@{/css/style.css}" />
-  <script>
-    function confirmReturn(borrowId) {
-      if (confirm("Are you sure you want to approve this return?")) {
-        window.location.href = "/admin/approve-return/" + borrowId;
-      }
-    }
-  </script>
 </head>
 <body>
-<div class="container">
-  <h2>Return Requests</h2>
-  <table>
-    <thead>
-    <tr>
-      <th>Book Title</th>
-      <th>Requested By</th>
-      <th>Request Date</th>
-      <th>Action</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="request : ${returnRequests}">
-      <td th:text="${request.book.title}"></td>
-      <td th:text="${request.user.username}"></td>
-      <td th:text="${request.returnRequestedAt}"></td>
-      <td>
-        <button th:onclick="'confirmReturn(' + ${request.id} + ')'">Approve</button>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+<div class="page-container">
+  <header class="main-header">
+    <div class="header-content">
+      <h1 class="site-title">Return Requests</h1>
+      <nav class="header-nav">
+        <a th:href="@{/}" class="nav-link">Back to Home</a>
+      </nav>
+    </div>
+  </header>
 
-  <a th:href="@{/}">Back to Home</a>
+  <main class="main-content">
+    <div class="table-container">
+      <table class="data-table">
+        <thead class="data-table__head">
+        <tr class="data-table__row">
+          <th class="data-table__header">Book Title</th>
+          <th class="data-table__header">Requested By</th>
+          <th class="data-table__header">Request Date</th>
+          <th class="data-table__header">Action</th>
+        </tr>
+        </thead>
+        <tbody class="data-table__body">
+        <tr th:each="request : ${returnRequests}" class="data-table__row">
+          <td th:text="${request.book.title}" class="data-table__cell"></td>
+          <td th:text="${request.user.username}" class="data-table__cell"></td>
+          <td th:text="${request.returnRequestedAt}" class="data-table__cell"></td>
+          <td class="data-table__cell">
+            <button th:onclick="'confirmReturn(' + ${request.id} + ')'" class="button button--primary">Approve</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
 </div>
+<script>
+  function confirmReturn(borrowId) {
+    if (confirm("Are you sure you want to approve this return?")) {
+      window.location.href = "/admin/approve-return/" + borrowId;
+    }
+  }
+</script>
 </body>
 </html>

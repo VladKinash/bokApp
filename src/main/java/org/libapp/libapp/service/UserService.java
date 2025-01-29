@@ -8,6 +8,9 @@ import org.libapp.libapp.entity.UserRoleId;
 import org.libapp.libapp.exception.ResourceNotFoundException;
 import org.libapp.libapp.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,5 +125,17 @@ public class UserService {
         userRoleService.addUserRole(userRole);
 
         return savedUser;
+    }
+
+    public User getCurrentLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication!= null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails userDetails) {
+                String username = userDetails.getUsername();
+                return getUserByUsername(username);
+            }
+        }
+        return null;
     }
 }
