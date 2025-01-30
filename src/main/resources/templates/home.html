@@ -8,6 +8,28 @@
     <title>Book Catalog</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <style>
+        .stats-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .stats-button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .stats-button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
 <div class="page-container">
@@ -79,6 +101,10 @@
                 </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="stats-buttons" sec:authorize="hasAnyRole('ADMIN','LIBRARIAN')">
+            <a th:href="@{/statistics}" class="stats-button">Book Statistics</a>
+            <a th:href="@{/statistics/authors-statistics}" class="stats-button">Author Statistics</a>
         </div>
     </main>
 </div>

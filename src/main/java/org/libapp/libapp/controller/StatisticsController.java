@@ -18,4 +18,9 @@ public class StatisticsController {
     public String showStatisticsPage(Model model) {
         return "statistics";
     }
+
+    @GetMapping("/authors-statistics")
+    public String showAuthorStatisticsPage() {
+        return "authors-statistics";
+    }
 }
