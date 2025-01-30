@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Library Statistics</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .chart-container {
+      width: 600px;
+      margin: 20px auto;
+    }
+    table {
+      width: 500px;
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+<h1>Library Statistics</h1>
+
+<div>
+  <h2>Total Books</h2>
+  <p id="totalBooks"></p>
+</div>
+
+<div>
+  <h2>Overdue Books</h2>
+  <p id="overdueBooks"></p>
+</div>
+
+<div>
+  <h2>Currently Borrowed Books</h2>
+  <p id="currentlyBorrowed"></p>
+</div>
+
+<div class="chart-container">
+  <h2>Borrowings Per Month</h2>
+  <canvas id="borrowingsChart"></canvas>
+</div>
+
+<div class="chart-container">
+  <h2>Borrowings Per Month Last Year</h2>
+  <canvas id="borrowingsLastYearChart"></canvas>
+</div>
+
+<div>
+  <h2>Top Borrowed Books</h2>
+  <table id="topBorrowedBooksTable">
+    <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Title</th>
+      <th>Borrow Count</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  fetch('/api/statistics/total-books')
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('totalBooks').textContent = data;
+          });
+
+  fetch('/api/statistics/overdue-books')
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('overdueBooks').textContent = data;
+          });
+
+  fetch('/api/statistics/currently-borrowed')
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById('currentlyBorrowed').textContent = data;
+          });
+
+  function createChart(canvasId, data, label) {
+    const formattedData = data.map(item => {
+      const [year, month] = item.yearMonth.split('-');
+      return {
+        date: new Date(year, month - 1), // Month is 0-indexed in JavaScript Date
+        count: item.count
+      };
+    });
+
+    formattedData.sort((a, b) => a.date - b.date);
+
+    const labels = formattedData.map(item =>
+            item.date.toLocaleString('default', { month: 'short', year: 'numeric' }) // Format for display
+    );
+    const counts = formattedData.map(item => item.count);
+
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: label,
+          data: counts,
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+
+  fetch('/api/statistics/borrowings-per-month')
+          .then(response => response.json())
+          .then(data => {
+            createChart('borrowingsChart', data, 'Borrowings Per Month');
+          });
+
+  fetch('/api/statistics/borrowings-per-month-last-year')
+          .then(response => response.json())
+          .then(data => {
+            createChart('borrowingsLastYearChart', data, 'Borrowings Per Month (Last Year)');
+          });
+
+  fetch('/api/statistics/top-borrowed-books')
+          .then(response => response.json())
+          .then(data => {
+            const tableBody = document.getElementById('topBorrowedBooksTable').querySelector('tbody'); // Correct way to get tbody
+            data.forEach((book, index) => {
+              const row = tableBody.insertRow();
+              const rankCell = row.insertCell();
+              const titleCell = row.insertCell();
+              const countCell = row.insertCell();
+
+              rankCell.textContent = index + 1;
+              titleCell.textContent = book.title;
+              countCell.textContent = book.borrowCount;
+            });
+          });
+</script>
+</body>
+</html>
