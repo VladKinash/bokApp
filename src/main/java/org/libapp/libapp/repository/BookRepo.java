@@ -1,7 +1,10 @@
 package org.libapp.libapp.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.libapp.libapp.entity.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor; // Add this import
+import org.springframework.stereotype.Repository;
 
-public interface BookRepo extends JpaRepository<Book, Integer> {
+@Repository
+public interface BookRepo extends JpaRepository<Book, Integer>, JpaSpecificationExecutor<Book> { // Add JpaSpecificationExecutor
 }

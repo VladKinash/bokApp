@@ -75,16 +75,14 @@ public class UserRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
-        // 1. Identify and remove roles to be deleted
         Set<UserRole> rolesToRemove = new HashSet<>();
         for (UserRole existingRole : user.getUserRoles()) {
             if (roleIds == null || !roleIds.contains(existingRole.getRole().getId())) {
                 rolesToRemove.add(existingRole);
             }
         }
-        user.getUserRoles().removeAll(rolesToRemove); // Remove from the collection
+        user.getUserRoles().removeAll(rolesToRemove);
 
-        // 2. Add new roles
         if (roleIds != null) {
             for (Integer roleId : roleIds) {
                 boolean roleExists = user.getUserRoles().stream().anyMatch(ur -> ur.getRole().getId().equals(roleId));
@@ -102,7 +100,7 @@ public class UserRestController {
             }
         }
 
-        userService.updateUser(user.getId(), user); // Persist changes
+        userService.updateUser(user.getId(), user);
         return ResponseEntity.ok("Roles updated successfully");
     }
 }

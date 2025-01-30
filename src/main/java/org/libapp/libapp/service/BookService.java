@@ -84,4 +84,6 @@ public class BookService {
         book.setCopiesAvailable(book.getCopiesAvailable() - amount);
         bookRepo.save(book);
     }
+
+
 }

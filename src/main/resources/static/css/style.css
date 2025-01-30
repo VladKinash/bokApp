@@ -1,161 +1,433 @@
+/* General Body Styles */
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #f2f2f2;
+    background-color: #121212; /* Dark background */
+    color: #e0e0e0; /* Light text for contrast */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern sans-serif font */
+    line-height: 1.6;
     margin: 0;
     padding: 0;
+    text-align: center;
 }
 
-.container {
-    width: 80%;
-    margin: 50px auto;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+/* Container Styles */
+.container, .page-container, .auth-container {
+    max-width: 950px; /* Increased width */
+    margin: 30px auto; /* Increased margin */
+    padding: 30px; /* Increased padding */
+    background-color: #1e1e1e; /* Slightly lighter container background */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Header Styles */
+.main-header {
+    background-color: #282828;
+    color: #e0e0e0;
+    padding: 10px 0;
+    text-align: center;
+    margin-bottom: 40px; /* Increased margin */
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    max-width: 950px;
+    margin: 0 auto;
+}
+
+.site-title {
+    margin: 0;
+    font-size: 30px;
+}
+
+.header-nav {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.nav-list {
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0;
+}
+
+.nav-item {
+    display: inline-block;
+}
+
+.nav-link, .nav-button {
+    color: #e0e0e0;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    border: none;
+    background-color: transparent;
+    font-size: 18px;
+}
+
+.nav-link:hover, .nav-button:hover {
+    background-color: #424242;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: #e0e0e0; /* Consistent heading color */
+    font-weight: 600;
+    line-height: 1.2;
+    margin-top: 0;
+}
+
+h1 {
+    font-size: 2.5rem;
+    text-align: center;
 }
 
 h2 {
+    font-size: 2rem;
     text-align: center;
     margin-bottom: 20px;
-    color: #333;
 }
 
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-    width: 93%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-}
-
-button[type="submit"] {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #4CAF50; /* Green */
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-button[type="submit"]:hover {
-    background-color: #45a049; /* Darker green */
-}
-
-.error {
-    color: red;
-    margin-bottom: 10px;
-}
-
-.info {
-    color: green;
-    margin-bottom: 10px;
-}
-
-a {
-    color: #007bff; /* Blue */
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
+h3 {
+    font-size: 1.5rem;
 }
 
 p {
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+/* Links */
+a {
+    color: #87cefa; /* Light blue for links - good for colorblindness */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #4682b4; /* Darker blue on hover */
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px auto;
+}
+
+th, td {
+    padding: 15px; /* Increased padding */
+    text-align: left;
+    border-bottom: 1px solid #424242; /* Subtle border for readability */
+}
+
+th {
+    background-color: #282828; /* Darker header row */
+    color: #e0e0e0;
+    font-size: 20px;
+}
+
+td{
+    font-size: 18px;
+}
+
+/* Forms */
+form {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #e0e0e0;
+    font-size: 18px;
+}
+
+.form-input, .form-textarea, select {
+    width: 95%;
+    padding: 10px;
+    border: 1px solid #424242;
+    border-radius: 4px;
+    background-color: #282828;
+    color: #e0e0e0;
+    font-family: inherit;
+    font-size: 18px;
+}
+
+.form-textarea {
+    min-height: 120px;
+}
+
+/* Buttons */
+.button, button, .stats-button {
+    display: inline-block;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #87cefa;
+    color: #121212;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    font-size: 18px;
+}
+
+.button:hover, button:hover, .stats-button:hover {
+    background-color: #4682b4;
+    color: #e0e0e0;
+}
+
+.button--primary {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+.button--primary:hover {
+    background-color: #367c39;
+}
+
+.button--edit {
+    background-color: #ffb300; /* Yellow for edit */
+    color: #121212;
+}
+
+.button--edit:hover {
+    background-color: #cc8f00; /* Darker yellow */
+    color: #e0e0e0;
+}
+
+.button--delete {
+    background-color: #d9534f; /* Red for delete */
+    color: #fff;
+}
+
+.button--delete:hover {
+    background-color: #b03532; /* Darker red */
+}
+
+.borrow-button {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.borrow-button:hover {
+    background-color: #367c39;
+}
+
+/* Alerts */
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert--error {
+    background-color: #fdd;
+    border-color: #faa;
+    color: #a00;
+}
+
+.alert--info {
+    background-color: #ddf;
+    border-color: #aaf;
+    color: #00a;
+}
+
+.alert--success {
+    background-color: #dfd;
+    border-color: #afa;
+    color: #0a0;
+}
+
+/* Authentication Specific Styles */
+.auth-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.auth-form {
+    width: 100%;
+}
+
+.auth-text {
     text-align: center;
     margin-top: 15px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 30px;
+.auth-link {
+    color: #87cefa;
+    text-decoration: underline;
 }
 
-th, td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+/* Other Specific Styles */
+.back-button, .logout-button {
+    margin-top: 20px;
 }
 
-th {
-    background-color: #f5f5f5;
-    font-weight: bold;
-}
-
-/* New styles for logout button */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.logout-button {
-    padding: 8px 15px;
-    background-color: #dc3545; /* Red */
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.logout-button:hover {
-    background-color: #c82333; /* Darker red */
-}
-
-.borrow-button {
-    padding: 8px 15px;
-    background-color: #007bff; /* Blue */
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    text-decoration: none; /* Remove underline from <a> */
-    font-size: 14px;
-    margin-top: 10px;
-    display: inline-block; /* Allow margin */
-}
-
-.borrow-button:hover {
-    background-color: #0056b3; /* Darker blue */
-}
-
-.authors-button {
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
+.roles-dropdown {
+    position: relative;
     display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
+}
+
+.roles-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #282828;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
     border-radius: 4px;
 }
 
-.button {
-    display: inline-block;
+.roles-dropdown:hover .roles-dropdown-content {
+    display: block;
+}
+
+.role-checkbox {
+    padding: 8px;
+}
+
+.button--small {
     padding: 5px 10px;
-    background-color: #4CAF50;
+    font-size: 0.8rem;
+}
+
+.data-table__form {
+    display: inline-block;
+    margin: 0;
+}
+
+.data-table__link {
+    display: block;
+    width: 100%;
+    color: inherit;
+}
+
+/* Notifications */
+.notification-area {
+    position: relative;
+    margin-left: auto;
+}
+
+.notification-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.notification-icon {
+    font-size: 1.5rem;
+    color: #e0e0e0;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
     color: white;
-    text-decoration: none;
-    border-radius: 3px;
+    border-radius: 50%;
+    padding: 3px 6px;
+    font-size: 0.7rem;
 }
 
-.button:hover {
-    background-color: #45a049;
+.notification-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #282828;
+    min-width: 250px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+    padding: 10px;
 }
 
+.notification-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notification-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #424242;
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-message {
+    display: block;
+    color: #e0e0e0;
+    font-size: 0.9rem;
+}
+
+.notification-timestamp {
+    display: block;
+    color: #aaa;
+    font-size: 0.8rem;
+}
+
+.notification-empty {
+    color: #aaa;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.notification-link {
+    display: block;
+    color: #87cefa;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 0.9rem;
+}
+
+/* Style for the book-details page */
+.container ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.container li {
+    margin-bottom: 5px;
+}
+.error{
+    color: red;
+}
+
+.stats-buttons {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0;
+}

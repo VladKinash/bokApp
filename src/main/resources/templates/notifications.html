@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Notifications</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+<div class="container">
+  <h2>Your Notifications</h2>
+
+  <table>
+    <thead>
+    <tr>
+      <th>Message</th>
+      <th>Date</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="notification : ${notifications}">
+      <td th:text="${notification.message}"></td>
+      <td th:text="${#dates.format(notification.createdAt, 'dd-MMM-yyyy HH:mm')}"></td>
+      <td>
+        <form th:if="${!notification.isRead}" th:action="@{/notifications/mark-read/{id}(id=${notification.id})}" method="post">
+          <button type="submit">Mark as Read</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

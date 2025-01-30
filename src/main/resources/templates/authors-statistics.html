@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Author Statistics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            margin-bottom: 10px;
+        }
+        .chart-container {
+            width: 600px;
+            margin: 20px 0;
+        }
+        table {
+            width: 500px;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #1e1e1e;
+            color: #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #333;
+        }
+        th {
+            background-color: #333;
+        }
+        .export-button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .export-button:hover {
+            background-color: #45a049;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<h1>Author Statistics</h1>
+
+<div class="container">
+    <h2>Total Authors</h2>
+    <p id="totalAuthors"></p>
+    <button class="export-button" onclick="downloadCsv('total-authors')">Export as CSV</button>
+</div>
+
+<div class="container">
+    <h2>Authors with Most Books</h2>
+    <button class="export-button" onclick="downloadCsv('authors-most-books')">Export as CSV</button>
+    <table id="authorsMostBooksTable">
+        <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Author Name</th>
+            <th>Book Count</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<div class="container">
+    <h2>Most Borrowed Authors</h2>
+    <button class="export-button" onclick="downloadCsv('most-borrowed-authors')">Export as CSV</button>
+    <table id="mostBorrowedAuthorsTable">
+        <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Author Name</th>
+            <th>Borrow Count</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    fetch('/api/statistics/total-authors')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('totalAuthors').textContent = data;
+        });
+
+    fetch('/api/statistics/authors-most-books')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('authorsMostBooksTable').querySelector('tbody');
+            data.forEach((author, index) => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `<td>${index + 1}</td><td>${author.firstName} ${author.lastName}</td><td>${author.bookCount}</td>`;
+            });
+        });
+
+    fetch('/api/statistics/most-borrowed-authors')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.getElementById('mostBorrowedAuthorsTable').querySelector('tbody');
+            data.forEach((author, index) => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `<td>${index + 1}</td><td>${author.firstName} ${author.lastName}</td><td>${author.borrowCount}</td>`;
+            });
+        });
+
+    function downloadCsv(endpoint) {
+        fetch(`/api/statistics/export/${endpoint}`)
+            .then(response => {
+                const filename = response.headers.get('Content-Disposition').split('filename=')[1].replace(/"/g, '');
+                return response.blob().then(blob => ({ blob, filename }));
+            })
+            .then(({ blob, filename }) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => console.error('Error downloading CSV:', error));
+    }
+</script>
+</body>
+</html>
