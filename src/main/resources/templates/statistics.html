@@ -102,24 +102,28 @@
 <body>
 <h1>Library Statistics</h1>
 
+<!-- Total Books Section -->
 <div class="stats-section">
   <h2>Total Books</h2>
   <p id="totalBooks">Loading...</p>
   <button class="export-button" onclick="downloadCsv('total-books')">Export as CSV</button>
 </div>
 
+<!-- Overdue Books Section -->
 <div class="stats-section">
   <h2>Overdue Books</h2>
   <p id="overdueBooks">Loading...</p>
   <button class="export-button" onclick="downloadCsv('overdue-books')">Export as CSV</button>
 </div>
 
+<!-- Currently Borrowed Books Section -->
 <div class="stats-section">
   <h2>Currently Borrowed Books</h2>
   <p id="currentlyBorrowed">Loading...</p>
   <button class="export-button" onclick="downloadCsv('currently-borrowed')">Export as CSV</button>
 </div>
 
+<!-- Borrowings Per Month Chart -->
 <div class="stats-section">
   <div class="chart-container">
     <h2>Borrowings Per Month</h2>
@@ -128,6 +132,7 @@
   </div>
 </div>
 
+<!-- Borrowings Per Month Last Year Chart -->
 <div class="stats-section">
   <div class="chart-container">
     <h2>Borrowings Per Month Last Year</h2>
@@ -136,6 +141,7 @@
   </div>
 </div>
 
+<!-- Top Borrowed Books Table -->
 <div class="stats-section">
   <h2>Top Borrowed Books</h2>
   <button class="export-button" onclick="downloadCsv('top-borrowed-books')">Export as CSV</button>
@@ -155,6 +161,44 @@
   </table>
 </div>
 
+<!-- Global downloadCsv Function -->
+<script>
+  /**
+   * Downloads a CSV file from the specified endpoint.
+   * @param {string} endpoint - The API endpoint to fetch the CSV from.
+   */
+  function downloadCsv(endpoint) {
+    fetch(`/api/statistics/export/${endpoint}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              const disposition = response.headers.get('Content-Disposition');
+              let filename = 'data.csv';
+              if (disposition && disposition.indexOf('filename=') !== -1) {
+                const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                const matches = filenameRegex.exec(disposition);
+                if (matches != null && matches[1]) {
+                  filename = matches[1].replace(/['"]/g, '');
+                }
+              }
+              return response.blob().then(blob => ({ blob, filename }));
+            })
+            .then(({ blob, filename }) => {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = filename;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              window.URL.revokeObjectURL(url);
+            })
+            .catch(error => console.error('Error downloading CSV:', error));
+  }
+</script>
+
+<!-- Main Script for Fetching Data and Creating Charts -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // Fetch and display total books
@@ -300,37 +344,6 @@
               const tableBody = document.getElementById('topBorrowedBooksTable').querySelector('tbody');
               tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center;">Error loading data</td></tr>';
             });
-
-    // Function to download CSV
-    function downloadCsv(endpoint) {
-      fetch(`/api/statistics/export/${endpoint}`)
-              .then(response => {
-                if (!response.ok) {
-                  throw new Error('Network response was not ok');
-                }
-                const disposition = response.headers.get('Content-Disposition');
-                let filename = 'data.csv';
-                if (disposition && disposition.indexOf('filename=') !== -1) {
-                  const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-                  const matches = filenameRegex.exec(disposition);
-                  if (matches != null && matches[1]) {
-                    filename = matches[1].replace(/['"]/g, '');
-                  }
-                }
-                return response.blob().then(blob => ({ blob, filename }));
-              })
-              .then(({ blob, filename }) => {
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-              })
-              .catch(error => console.error('Error downloading CSV:', error));
-    }
   });
 </script>
 </body>
