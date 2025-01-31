@@ -34,9 +34,7 @@ public class BookService {
     }
 
     public Book addBook(Book book) {
-        // Save the book first to generate the ID
-        Book savedBook = bookRepo.save(book);
-        return savedBook;
+        return bookRepo.save(book);
     }
 
     public Book getBookById(Integer id) {
